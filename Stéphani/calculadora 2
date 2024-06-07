@@ -1,0 +1,88 @@
+import tkinter as tk
+from tkinter import ttk
+import math
+
+def evaluate_expression():
+    try:
+        result = eval(entry.get())
+        entry.delete(0, tk.END)
+        entry.insert(tk.END, str(result))
+    except Exception as e:
+        entry.delete(0, tk.END)
+        entry.insert(tk.END, "Erro")
+
+def button_click(event):
+    entry.insert(tk.END, event.widget.cget("text"))
+
+def clear_entry():
+    entry.delete(0, tk.END)
+
+def square_root():
+    try:
+        result = math.sqrt(float(entry.get()))
+        entry.delete(0, tk.END)
+        entry.insert(tk.END, str(result))
+    except Exception as e:
+        entry.delete(0, tk.END)
+        entry.insert(tk.END, "Erro")
+
+def ohms_law():
+    try:
+        voltage = float(entry.get())
+        current = float(current_entry.get())
+        resistance = voltage / current
+        resistance_entry.delete(0, tk.END)
+        resistance_entry.insert(tk.END, str(resistance))
+    except Exception as e:
+        resistance_entry.delete(0, tk.END)
+        resistance_entry.insert(tk.END, "Erro")
+
+root = tk.Tk()
+root.title("Calculadora Científica e de Engenharia")
+
+# Entrada para exibir os números e o resultado
+entry = tk.Entry(root, width=50)
+entry.grid(row=0, column=0, columnspan=4)
+
+# Botões numéricos e operadores
+buttons = [
+    ('7', 1, 0), ('8', 1, 1), ('9', 1, 2), ('/', 1, 3),
+    ('4', 2, 0), ('5', 2, 1), ('6', 2, 2), ('*', 2, 3),
+    ('1', 3, 0), ('2', 3, 1), ('3', 3, 2), ('-', 3, 3),
+    ('0', 4, 0), ('.', 4, 1), ('=', 4, 2), ('+', 4, 3)
+]
+
+for (text, row, column) in buttons:
+    button = ttk.Button(root, text=text)
+    button.grid(row=row, column=column, sticky="nsew")
+    button.bind("<Button-1>", button_click)
+
+# Botões de funções adicionais
+functions = [
+    ('C', 5, 0), ('√', 5, 1), ('sin', 5, 2), ('cos', 5, 3),
+    ('tan', 6, 0), ('log', 6, 1), ('ln', 6, 2), ('^', 6, 3),
+    ('Ohm\'s Law', 7, 0)
+]
+
+for (text, row, column) in functions:
+    button = ttk.Button(root, text=text)
+    button.grid(row=row, column=column, sticky="nsew")
+    button.bind("<Button-1>", button_click if text != 'C' and text != "Ohm's Law" else (lambda event: clear_entry() if text == 'C' else lambda event: ohms_law()))
+
+# Botão para avaliar a expressão
+equal_button = ttk.Button(root, text="=", command=evaluate_expression)
+equal_button.grid(row=4, column=2, columnspan=2, sticky="nsew")
+
+# Entrada para a corrente (para o cálculo da Lei de Ohm)
+current_entry = tk.Entry(root, width=10)
+current_entry.grid(row=7, column=1, sticky="nsew")
+current_label = tk.Label(root, text="Corrente (A):")
+current_label.grid(row=7, column=0, sticky="nsew")
+
+# Saída para a resistência (para o cálculo da Lei de Ohm)
+resistance_entry = tk.Entry(root, width=20)
+resistance_entry.grid(row=7, column=2, columnspan=2, sticky="nsew")
+resistance_label = tk.Label(root, text="Resistência (Ω):")
+resistance_label.grid(row=7, column=4, sticky="nsew")
+
+root.mainloop()
